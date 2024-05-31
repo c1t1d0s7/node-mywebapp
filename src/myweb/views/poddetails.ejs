@@ -1,0 +1,26 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+<main>
+  <h2><%= title %></h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Key</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let category in podDetails) { %>
+        <% for (let key in podDetails[category]) { %>
+          <tr>
+            <td><%= category %></td>
+            <td><%= key %></td>
+            <td><%= podDetails[category][key] %></td>
+          </tr>
+        <% } %>
+      <% } %>
+    </tbody>
+  </table>
+</main>
+<%- include('partials/footer') %>

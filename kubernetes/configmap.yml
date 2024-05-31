@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-myweb-configmap
+  labels:
+    app: node-myweb
+data:
+  NODE_ENV: production
+  PORT: '3000'
+  MYAPP_HOST: node-myapp-svc
+  MYAPP_PORT: '3000'
+  MYDIARY_HOST: node-mydiary-svc
+  MYDIARY_PORT: '3000'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-myapp-configmap
+  labels:
+    app: node-myapp
+data:
+  NODE_ENV: production
+  PORT: '3000'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-mydiary-configmap
+  labels:
+    app: node-mydiary
+data:
+  NODE_ENV: production
+  PORT: '3000'
+  DATABASE_HOST: node-mydb-svc
+  DATABASE_USER: myuser
+  DATABASE_NAME: mydiary
+  DATABASE_PORT: '3306'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-myweather-configmap
+  labels:
+    app: node-myweather
+data:
+  NODE_ENV: production
+  PORT: '3000'
+  WEATHER_SERVICE: wttr.in
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-mydb-configmap
+  labels:
+    app: node-myapp
+data:
+  MYSQL_USER: myuser
+  MYSQL_DATABASE: mydiary

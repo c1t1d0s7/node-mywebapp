@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+<main>
+  <h2><%= title %></h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (let key in hostname) { %>
+        <tr>
+          <td><%= key %></td>
+          <td><%= hostname[key] %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</main>
+<%- include('partials/footer') %>

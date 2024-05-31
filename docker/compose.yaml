@@ -1,0 +1,129 @@
+version: '3'
+
+services:
+  myweb:
+    build:
+      context: ../src/myweb
+    image: ghcr.io/c1t1d0s7/node-myweb
+    restart: always
+    environment:
+      # NODE_ENV: production
+      NODE_ENV: development
+      PORT: 3000
+      MYAPP_HOST: myapp
+      MYAPP_PORT: 3000
+      MYDIARY_HOST: mydiary
+      MYDIARY_PORT: 3000
+    ports:
+      - 80:3000
+    networks:
+      - mynet
+    deploy:
+      resources:
+        reservations:
+          cpus: 250m
+          memory: 64M
+        limits:
+          cpus: 500m
+          memory: 512M
+  myapp:
+    build:
+      context: ../src/myapp
+    image: ghcr.io/c1t1d0s7/node-myapp
+    restart: always
+    environment:
+      # NODE_ENV: production
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - 3001:3000
+    networks:
+      - mynet
+    deploy:
+      resources:
+        reservations:
+          cpus: 250m
+          memory: 64M
+        limits:
+          cpus: 500m
+          memory: 512M
+  mydiary:
+    depends_on:
+      - mydb
+    build:
+      context: ../src/mydiary
+    image: ghcr.io/c1t1d0s7/node-mydiary
+    restart: always
+    environment:
+      # NODE_ENV: production
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_HOST: mydb
+      DATABASE_USER: myuser
+      DATABASE_PASSWORD: P@ssw0rd
+      DATABASE_NAME: mydiary
+      DATABASE_PORT: 3306
+    ports:
+      - 3002:3000
+    networks:
+      - mynet
+    deploy:
+      resources:
+        reservations:
+          cpus: 250m
+          memory: 64M
+        limits:
+          cpus: 500m
+          memory: 512M
+  myweather:
+    build:
+      context: ../src/myweather
+    image: ghcr.io/c1t1d0s7/node-myweather
+    restart: always
+    environment:
+      # NODE_ENV: production
+      NODE_ENV: development
+      PORT: 3000
+      WEATHER_SERVICE: wttr.in
+    ports:
+      - 3003:3000
+    networks:
+      - mynet
+    deploy:
+      resources:
+        reservations:
+          cpus: 250m
+          memory: 64M
+        limits:
+          cpus: 500m
+          memory: 512M
+  mydb:
+    image: mysql:8
+    restart: always
+    ports:
+      - 3306
+    networks:
+      - mynet
+    volumes:
+      - mydb_data:/var/lib/mysql
+    environment:
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: P@ssw0rd
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_DATABASE: mydiary
+      # TZ: Asia/Seoul
+    deploy:
+      resources:
+        reservations:
+          cpus: 250m
+          memory: 64M
+        limits:
+          cpus: 500m
+          memory: 512M
+          
+volumes:
+  mydb_data: {}
+
+networks:
+  mynet:
+    driver: bridge

@@ -1,0 +1,110 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+<main>
+  <h2><%= title %></h2>
+  <input type="button" value="Delete" onclick="deleteEntry()" style="font-size: 20px;">
+  <input type="button" value="Edit" onclick="editEntry()" style="font-size: 20px;">
+  <br><br>
+  <table>
+    <thead style="text-align: center;">
+      <tr>
+        <th style="width: 5%;">ID</th>
+        <th style="width: 65%;">TITLE</th>
+        <th style="width: 10%;">WEATHER</th>
+        <th style="width: 20%;">DATE</th>
+      </tr>
+      </tr>
+    </thead>
+    <tbody style="text-align: center;">
+      <tr>
+        <td><%= entry.id %></td>
+        <td><%= entry.title %></td>
+        <td><%= entry.weather %></td>
+        <td><%= entry.date %></td>
+      </tr>
+    </tbody>
+    <tbody">
+      <tr>
+        <th colspan="4" style="text-align: left; padding-right: 10px; padding-left: 10px;">CONTENT</th>
+      </tr>
+    </tbody>
+    <tbody>
+      <tr>
+        <td colspan="4" style="text-align: left; padding-right: 10px; padding-left: 10px;""><%= entry.content %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    function deleteEntry() {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.delete('http://???????:XXXXXX/diary/<%= entry.id%>')
+            .then(function(response) {
+              console.log(response);
+              window.location.href = '/diary';
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        }
+      });
+    }
+  </script>
+
+  <script>
+    async function editEntry() {
+      const { value: formValues } = await Swal.fire({
+        title: 'Edit Entry',
+        html:
+          '<input id="swal-input1" class="swal2-input" style="width: 300px;" placeholder="Title" value="<%= entry.title %>">' +
+          '<input id="swal-input2" class="swal2-input" style="width: 300px;" placeholder="Weather" value="<%= entry.weather %>">' +
+          '<textarea id="swal-input3" class="swal2-textarea" style="width: 300px;" placeholder="Content"><%= entry.content %></textarea>',
+        focusConfirm: false,
+        preConfirm: () => {
+          return [
+            document.getElementById('swal-input1').value,
+            document.getElementById('swal-input2').value,
+            document.getElementById('swal-input3').value
+          ]
+        }
+      })
+
+      if (formValues && formValues[0].trim() !== "" && formValues[2].trim() !== "") {
+        var updatedEntry = {
+          title: formValues[0],
+          weather: formValues[1],
+          content: formValues[2]
+        };
+
+        // Check if any field has changed
+        if (formValues[0] !== "<%= entry.title %>" || formValues[1] !== "<%= entry.weather %>" || formValues[2] !== "<%= entry.content %>") {
+          axios.put('/diary/<%= entry.id %>', updatedEntry)
+            .then(function(response) {
+              console.log(response);
+              window.location.href = '/diary/<%= entry.id %>';
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Title and content cannot be empty!',
+        })
+      }
+    }
+  </script>
+
+</main>
+<%- include('partials/footer') %>

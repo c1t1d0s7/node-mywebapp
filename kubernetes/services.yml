@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-myweb-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: node-myweb
+  ports:
+  - port: 80
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-myapp-svc
+spec:
+  selector:
+    app: node-myapp
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-mydiary-svc
+spec:
+  selector:
+    app: node-mydiary
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-myweather-svc
+spec:
+  selector:
+    app: node-myweather
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-mydb-svc
+spec:
+  selector:
+    app: node-mydb
+  ports:
+  - port: 3306
+    targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myrds
+  annotations:
+    used_for: rds
+spec:
+  type: ExternalName
+  externalName: mydb.abcdefghijkl.ap-northeast-2.rds.amazonaws.com
+  ports:
+  - port: 3306
+    targetPort: 3306

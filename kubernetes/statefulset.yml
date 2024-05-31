@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: node-mydb-sts
+  labels:
+    app: node-myapp
+spec:
+  selector:
+    matchLabels:
+      app: node-mydb
+  serviceName: node-mydb-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: node-mydb
+    spec:
+      containers:
+      - name: mydb
+        image: mysql:8
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: database
+          mountPath: /var/lib/mysql
+        envFrom:
+        - configMapRef:
+            name: node-mydb-configmap
+        - secretRef:
+            name: node-mydb-secret
+  volumeClaimTemplates:
+  - metadata:
+      name: database
+      labels:
+        app: node-myapp
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

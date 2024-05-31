@@ -1,0 +1,110 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+<main>
+  <h2><%= title %></h2>
+  <table>
+    <tr>
+      <th style="text-align: left; width: 50%;">Status</th>
+      <td style="text-align: left; width: 50%;"><%= healthcheck %></td>
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Current Maintenance Mode</th>
+      <td style="text-align: left; width: 50%;"><%= maintenance %></td>
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Change Maintenance Mode</th>
+      <td style="text-align: left; width: 50%;">
+        <input type="button" value="enable" onclick="enableMaintenanceMode()" style="font-size: 15px; width: 40%;">
+        <input type="button" value="disable" onclick="disableMaintenanceMode()" style="font-size: 15px; width: 40%;">
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Kill</th>
+      <td style="text-align: left; width: 50%;">
+        <input type="button" value="kill" onclick="kill()" style="font-size: 15px; width: 80%;">
+      </td>
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Uptime</th>
+      <td style="text-align: left; width: 50%;"><%= hours %>H <%= minutes %>M <%= seconds %>S</td>
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Generate CPU Load</th>
+      <td style="text-align: left; width: 50%;">
+        <form action="/load/cpu" method="get">
+          <input type="text" name="n" value="40" id="numberOfCpu" style="width: 40%;">
+          <input type="button" value="Generate" onclick="generateCPULoad()" style="font-size: 15px; width: 40%;">
+        </form>
+      </td>
+      </td>
+    </tr>
+    <tr>
+      <th style="text-align: left; width: 50%;">Generate Memory Load</th>
+      <td style="text-align: left; width: 50%;">
+        <form action="/load/memory" method="get">
+          <input type="text" name="n" value="10000" id="numberOfMemory" style="width: 40%;">
+          <input type="button" value="Generate" onclick="generateMemoryLoad()" style="font-size: 15px; width: 40%;">
+        </form>
+      </td>
+    </tr>
+  </table>
+
+  <script>
+    function enableMaintenanceMode() {
+      axios.post('/healthcheck/maintenance/enable')
+        .then(function(response) {
+          console.log(response);
+          window.location.href = '/healthcheck';
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+    function disableMaintenanceMode() {
+      axios.post('/healthcheck/maintenance/disable')
+        .then(function(response) {
+          console.log(response);
+          window.location.href = '/healthcheck';
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+    function kill() {
+      axios.get('/healthcheck/kill')
+        .then(function(response) {
+          console.log(response);
+          window.location.href = '/healthcheck';
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
+    function generateCPULoad() {
+      axios.get('/load/cpu?n=' + document.getElementById('numberOfCpu').value)
+      .then(function(response) {
+        console.log(response);
+        window.location.href = '/healthcheck';
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
+      .finally(function() {
+        alert('Load generation completed.');
+      });
+    }
+    function generateMemoryLoad() {
+      axios.get('/load/memory?n=' + document.getElementById('numberOfMemory').value)
+        .then(function(response) {
+          console.log(response);
+          window.location.href = '/healthcheck';
+        })
+        .catch(function(error) {
+          console.log(error);
+        })
+        .finally(function() {
+          alert('Load generation completed.');
+        });
+    }
+  </script>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,72 @@
+<%- include('partials/header') %>
+<%- include('partials/nav') %>
+<main>
+  <h2><%= title %></h2>
+  <input type="button" value="Write Diary" onclick="writeDiary()" style="font-size: 20px;">
+
+  <h2>Diary Entries</h2>
+  <table>
+    <thead style="text-align: center;">
+      <tr>
+        <th style="width: 5%;">ID</th>
+        <th style="width: 65%;">TITLE</th>
+        <th style="width: 10%;">WEATHER</th>
+        <th style="width: 20%;">DATE</th>
+      </tr>
+      </tr>
+    </thead>
+    <tbody style="text-align: center;">
+      <% entries.forEach(function(item) { %>
+        <tr style="height: 30px;">
+          <td><a href="/diary/<%= item.id %>" style="width: 5%; text-decoration: none; color: black;"><%= item.id %></a></td>
+          <td><a href="/diary/<%= item.id %>" style="width: 65%; text-decoration: none; color: black;"><%= item.title %></a></td>
+          <td><a href="/diary/<%= item.id %>" style="width: 10%; text-decoration: none; color: black;"><%= item.weather %></a></td>
+          <td><a href="/diary/<%= item.id %>" style="width: 20%; text-decoration: none; color: black;"><%= item.date %></a></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <script>
+    async function writeDiary() {
+      const { value: formValues } = await Swal.fire({
+        title: 'Write Diary',
+        html:
+          '<input id="swal-input1" class="swal2-input" placeholder="Title" style="width: 300px;">' +
+          '<input id="swal-input2" class="swal2-input" placeholder="Weather" style="width: 300px;">' +
+          '<textarea id="swal-input3" class="swal2-textarea" placeholder="Content" style="width: 300px;"></textarea>',
+        focusConfirm: false,
+        preConfirm: () => {
+          const title = document.getElementById('swal-input1').value;
+          const weather = document.getElementById('swal-input2').value;
+          const content = document.getElementById('swal-input3').value;
+          
+          if (!title || !content) {
+            Swal.showValidationMessage('Title and Content are required');
+            return false;
+          }
+          
+          return [title, weather, content];
+        }
+      })
+
+      if (formValues) {
+        var newEntry = {
+          title: formValues[0],
+          weather: formValues[1],
+          content: formValues[2]
+        };
+
+        axios.post('/diary', newEntry)
+          .then(function(response) {
+            console.log(response);
+            window.location.href = '/diary';
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      }
+    }
+  </script>
+</main>
+<%- include('partials/footer') %>
